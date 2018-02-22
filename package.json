@@ -1,6 +1,7 @@
 {
   "name": "parva",
   "version": "0.2.0",
+  "description": "Parva is a react data state management tool",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib"
@@ -10,6 +11,7 @@
     "react-dom": "15.x || ^16.0.0-0"
   },
   "author": "https://github.com/zinkey",
+  "homepage": "https://github.com/bigfishjs/parva",
   "files": [
     "lib"
   ],
