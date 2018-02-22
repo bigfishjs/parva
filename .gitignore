@@ -1,0 +1,9 @@
+pids
+logs
+node_modules
+npm-debug.log*
+coverage/
+run
+lib
+public
+.DS_Store
