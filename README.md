@@ -13,9 +13,7 @@ $ npm install --save parva
 ### Example
 
 
-#### 1
-
-```
+```javascript
 import { connect } from "parva"
 
 const data = {

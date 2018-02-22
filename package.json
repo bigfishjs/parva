@@ -1,6 +1,6 @@
 {
   "name": "parva",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "Parva is a react data state management tool",
   "main": "lib/index.js",
   "scripts": {
@@ -12,6 +12,10 @@
   },
   "author": "https://github.com/zinkey",
   "homepage": "https://github.com/bigfishjs/parva",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bigfishjs/parva.git"
+  },
   "files": [
     "lib"
   ],
