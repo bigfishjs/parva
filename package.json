@@ -1,6 +1,6 @@
 {
   "name": "parva",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "description": "Parva is a react data state management tool",
   "main": "lib/index.js",
   "scripts": {
