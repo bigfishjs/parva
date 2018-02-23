@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from '../../../src';
-import { A, B } from './model';
+import { A } from './model';
 
-@connect({ A, B })
+@connect({ A })
 class Page extends React.Component {
   componentDidMount() {
     this.props.A.change();
@@ -10,7 +10,6 @@ class Page extends React.Component {
   render() {
     return <div>
       {this.props.A.num}
-      {this.props.B.num}
     </div>
   }
 }
