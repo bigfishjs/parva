@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
+    "build:watch": "babel src --watch --out-dir lib",
     "test": "jest"
   },
   "peerDependencies": {
@@ -32,5 +33,10 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-test-renderer": "^16.2.0"
+  },
+  "dependencies": {
+    "es6-symbol": "^3.1.1",
+    "es6-weak-map": "^2.0.2",
+    "immer": "^1.1.1"
   }
 }

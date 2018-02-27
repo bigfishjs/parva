@@ -6,6 +6,7 @@ import Simple from "./fixtures/simple";
 test('Simple', () => {
   
   const component = renderer.create(<Simple />);
+  
   let tree = component.toJSON();
   expect(tree).toMatchSnapshot();
 
