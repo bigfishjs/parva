@@ -10,12 +10,13 @@ const model = {
     a: 1
   },
   async change() {
-    this.obj.a = '3';
+    this.obj.a = 2;
     await new Promise(r => setTimeout(r, 1000));
-    this.obj.a = 5;
-    this.obj.a = 4;
     this.obj.a = 3;
-    this.obj.a = 1;
+    await new Promise(r => setTimeout(r, 1000));
+    this.obj.a = 4;
+    this.obj.a = 5;
+    this.obj.a = 6;
   }
 }
 

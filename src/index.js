@@ -26,25 +26,10 @@ const connect = map => Comp => class extends React.Component {
           data[name] = (...args) => {
             const obj = modelMap.get(model);
             if (obj) {
-              let changed = false;
-              let changedData;
-              const { proxy: proxyData, revoke } = proxy(obj.data, () => {
-                changed = true;
-                changedData = proxyData;
+              const proxyData = proxy(obj.data, () => {
+                this.update(proxyData)
               });
-              const result = val.call(proxyData, ...args);
-              if (changed) {
-                this.update(changedData);
-              }
-              if (result && result.then) {
-                result.then(() => {
-                  if (changed) {
-                    this.update(changedData);
-                  }
-                  revoke();
-                });
-              }
-              return result;
+              return val.call(proxyData, ...args);
             }
           }
         } else {
@@ -70,16 +55,19 @@ const connect = map => Comp => class extends React.Component {
     }
   }
   update(data) {
-    for (const key in map) {
-      const model = map[key];
-      const obj = modelMap.get(model);
-      if (obj) {
-        obj.data = data;
-        obj.components.forEach(item => {
-          item.forceUpdate();
-        });
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      for (const key in map) {
+        const model = map[key];
+        const obj = modelMap.get(model);
+        if (obj) {
+          obj.data = data;
+          obj.components.forEach(item => {
+            item.forceUpdate();
+          });
+        }
       }
-    }
+    }, 0);
   }
   render() {
     const props = {};

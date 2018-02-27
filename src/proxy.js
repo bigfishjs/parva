@@ -2,16 +2,13 @@ import Symbol from 'es6-symbol';
 const PROXY = Symbol('parva-proxye');
 
 
-function proxy(obj, cb, list = []) {
+function proxy(obj, cb) {
   if (typeof obj !== 'object' || obj.PROXY_STATE) {
-    return {
-      proxy: obj,
-      revoke() {},
-    };
+    return obj;
   }
   obj[PROXY] = true;
   
-  const revocable = Proxy.revocable(obj, {
+  return new Proxy(obj, {
     set(state, prop, value) {
       let changed = false;
       if (state[prop] !== value) {
@@ -24,7 +21,7 @@ function proxy(obj, cb, list = []) {
       return true;
     },
     get(state, prop) {
-      return proxy(state[prop], cb, list).proxy;
+      return proxy(state[prop], cb);
     },
     deleteProperty(state, prop) {
       cb();
@@ -32,15 +29,6 @@ function proxy(obj, cb, list = []) {
       return true;      
     }
   });
-
-  list.push(revocable.revoke);
-
-  return {
-    proxy: revocable.proxy,
-    revoke() {
-      list.forEach(revoke => revoke());
-    }
-  }
 
 }
 
