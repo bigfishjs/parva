@@ -1,35 +1,59 @@
-import Symbol from 'es6-symbol';
-const PROXY = Symbol('parva-proxye');
+import copy from 'shallow-copy';
+import equal from './equal';
+import symbol from './symbol';
 
-
-function proxy(obj, cb) {
-  if (typeof obj !== 'object' || obj.PROXY_STATE) {
-    return obj;
+function update(state, prop, value) {
+  const obj = copy(state.obj);
+  obj[prop] = value;
+  state.obj = obj;
+  if (state.parent) {
+    update(state.parent, state.key, obj);
   }
-  obj[PROXY] = true;
+}
+
+function proxy({target, parent, key, cb}) {
   
-  return new Proxy(obj, {
-    set(state, prop, value) {
-      let changed = false;
-      if (state[prop] !== value) {
-        changed = true;
-      }
-      state[prop] = value;
-      if (changed) {
+  if (typeof target !== 'object' || target[symbol]) {
+    return target;
+  }
+
+  if (global[symbol]) {
+    return target;
+  }
+
+  return new Proxy({
+    obj: target,
+    parent,
+    key,
+    [symbol]: true,
+  }, {
+      set(state, prop, value) {
+        if (!equal(state.obj[prop], value)) {
+          update(state, prop, value)
+        }
         cb();
-      }
-      return true;
-    },
-    get(state, prop) {
-      return proxy(state[prop], cb);
-    },
-    deleteProperty(state, prop) {
-      cb();
-      delete state[prop];
-      return true;      
-    }
-  });
+        return true;
+      },
+      get(state, prop) {
+        if (global[symbol]) {
+          return state.obj[prop];
+        }
+        return proxy({
+          target: state.obj[prop],
+          parent: state,
+          key: prop,
+          cb,
+        });
+      },
+      // deleteProperty(state, prop) {
+      //   cb();
+      //   delete state[prop];
+      //   return true;
+      // }
+    });
 
 }
+
+
 
 export default proxy;

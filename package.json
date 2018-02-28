@@ -1,6 +1,6 @@
 {
   "name": "parva",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Parva is a react data state management tool",
   "main": "lib/index.js",
   "scripts": {
@@ -37,6 +37,7 @@
   "dependencies": {
     "es6-symbol": "^3.1.1",
     "es6-weak-map": "^2.0.2",
-    "immer": "^1.1.1"
+    "shallow-copy": "^0.0.1",
+    "shallowequal": "^1.0.2"
   }
 }

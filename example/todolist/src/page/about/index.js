@@ -9,6 +9,9 @@ const model = {
   obj: {
     a: 1
   },
+
+  x: [],
+
   async change() {
     this.obj.a = 2;
     await new Promise(r => setTimeout(r, 1000));
@@ -20,17 +23,19 @@ const model = {
   }
 }
 
-@connect({
-  model
-})
+@connect({ model })
 class Page extends React.Component {
+  componentWillReceiveProps(nextProps) {
+    console.log(this.props.model.obj === nextProps.model.obj);
+    console.log(this.props.model.x === nextProps.model.x);
+  }
   componentDidMount() {
     this.props.model.change();
   }
   render() {
     console.log('x')
     return <div>
-      {this.props.model.obj.a}
+     {this.props.model.obj.a}
     </div>
   }
 }
