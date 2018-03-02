@@ -1,16 +1,12 @@
 {
   "name": "parva",
-  "version": "1.1.0",
-  "description": "Parva is a react data state management tool",
+  "version": "1.4.0",
+  "description": "Parva is a data state management tool",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
     "build:watch": "babel src --watch --out-dir lib",
     "test": "jest"
-  },
-  "peerDependencies": {
-    "react": "15.x || ^16.0.0-0",
-    "react-dom": "15.x || ^16.0.0-0"
   },
   "author": "https://github.com/zinkey",
   "homepage": "https://github.com/bigfishjs/parva",
@@ -25,19 +21,12 @@
     "babel-cli": "^6.26.0",
     "babel-jest": "^22.4.0",
     "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
-    "jest": "^22.4.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-test-renderer": "^16.2.0"
+    "jest": "^22.4.0"
   },
   "dependencies": {
     "es6-symbol": "^3.1.1",
-    "es6-weak-map": "^2.0.2",
-    "shallow-copy": "^0.0.1",
-    "shallowequal": "^1.0.2"
+    "shallow-copy": "^0.0.1"
   }
 }

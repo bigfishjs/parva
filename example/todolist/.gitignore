@@ -1,9 +1,0 @@
-pids
-logs
-node_modules
-npm-debug.log*
-coverage/
-run
-dist
-public
-.DS_Store

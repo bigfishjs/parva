@@ -1,104 +1,74 @@
-import React from 'react';
-import WeakMap from 'es6-weak-map';
-import shallowequal from 'shallowequal';
-import proxy from './proxy';
+import copy from 'shallow-copy';
+import equal from './equal';
 import symbol from './symbol';
 
-
-const modelMap = new WeakMap();
-
-const connect = map => Comp => class extends React.Component {
-  constructor(props) {
-    super(props);
-    for (const key in map) {
-      const model = map[key];
-      let obj = modelMap.get(model);
-      if (!obj) {
-        obj = {
-          components: [this],
-          data: {},
-        };
-        modelMap.set(model, obj);
-      } else {
-        obj.components.push(this);
-      }
-
-      const data = {};
-      const array =[];
-      for (const name in model) {
-        const val = model[name];
-        if (typeof val === 'function') {
-          data[name] = (...args) => {
-            const obj = modelMap.get(model);
-            if (obj) {
-              const proxyData = proxy({
-                target: obj.data,
-                cb: () => {
-                  const nextData = {};
-                  global[symbol] = true;
-                  array.forEach(item => {
-                    nextData[item] = proxyData[item];
-                  });
-                  this.update(nextData);
-                  global[symbol] = false;
-                }
-              });
-              const result = val.call(proxyData, ...args);
-              return result;
-            }
-          }
-        } else {
-          data[name] = val;
-        }
-        array.push(name);
-      }
-      
-      obj.data = data;
-    }
-  }
-  update(data) {
-    clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      for (const key in map) {
-        const model = map[key];
-        const obj = modelMap.get(model);
-        if (obj) {
-          if (!shallowequal(obj.data, data)) {
-            obj.data = data;
-          }
-          obj.components.forEach(item => {
-            item.forceUpdate();
-          });
-        }
-      }
-    }, 0);
-  }
-  componentWillUnmount() {
-    for (const key in map) {
-      const model = map[key];
-      const obj = modelMap.get(model);
-      if (obj) {
-        const index = obj.components.indexOf(this);
-        if (index >= 0) {
-          obj.components.splice(index, 1);
-          if (obj.components.length === 0) {
-            modelMap.delete(model);
-          }
-        }
-      }
-    }
-  }
-  render() {
-    const props = {};
-    for (const key in map) {
-      const model = map[key];
-      const obj = modelMap.get(model);
-      props[key] = obj.data;
-    }
-    return <Comp {...this.props} {...props} />;
+function update(state, prop, value) {
+  const obj = copy(state.obj);
+  obj[prop] = value;
+  state.obj = obj;
+  if (state.parent) {
+    update(state.parent, state.key, obj);
   }
 }
 
-export default {
-  connect,
-};
+function del(state, prop) {
+  const obj = copy(state.obj);
+  delete obj[prop];
+  state.obj = obj;
+  if (state.parent) {
+    update(state.parent, state.key, obj);
+  }
+}
+
+function proxy({target, parent, key, onChange, root}) {
+  if (typeof target !== 'object' || target[symbol]) {
+    return target;
+  }
+
+  const val = {
+    root,
+    obj: target,
+    parent,
+    key,
+    [symbol]: true,
+  };
+  val.root = val.root || val;
+  return new Proxy(val, {
+      set(state, prop, value) {
+        if (!equal(state.obj[prop], value)) {
+          update(state, prop, value)
+          onChange(state.root.obj);
+       }
+        return true;
+      },
+      get(state, prop) {
+        return proxy({
+          root: val.root,
+          target: state.obj[prop],
+          parent: state,
+          key: prop,
+          onChange,
+        });
+      },
+      ownKeys(target) {
+        return Reflect.ownKeys(target.obj);
+      },
+      getOwnPropertyDescriptor(state, prop) {
+        const descriptor = Reflect.getOwnPropertyDescriptor(state.obj, prop);
+        if (descriptor && !(Array.isArray(state.obj) && prop === "length")) {
+          descriptor.configurable = true;
+        }
+        return descriptor;
+      },
+      deleteProperty(state, prop) {
+        del(state, prop)
+        onChange(state.root.obj);
+        return true;
+      }
+    });
+
+}
+
+
+
+export default proxy;
